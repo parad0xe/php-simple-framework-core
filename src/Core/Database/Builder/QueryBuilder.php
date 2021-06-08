@@ -26,12 +26,39 @@ class QueryBuilder
      */
     private ?string $entity_classname;
 
+    /**
+     * @var string
+     */
     private string $type;
+
+    /**
+     * @var string
+     */
     private string $select;
+
+    /**
+     * @var array
+     */
     private array $where = [];
+
+    /**
+     * @var array
+     */
     private array $active_where = [];
+
+    /**
+     * @var array
+     */
     private array $parameters = [];
+
+    /**
+     * @var array
+     */
     private array $limit = [];
+
+    /**
+     * @var array
+     */
     private array $order_by = [];
 
     /**
@@ -174,6 +201,8 @@ class QueryBuilder
         if($this->entity_classname !== null)
             $query->setFetchMode(PDO::FETCH_CLASS, $this->entity_classname);
 
+        $this->__clear();
+
         return $query;
     }
 
@@ -182,5 +211,15 @@ class QueryBuilder
             $this->where[] = "(" . implode(" AND ", $this->active_where) . ")";
             $this->active_where = [];
         }
+    }
+
+    private function __clear() {
+        $this->type = self::$TYPE_SELECT;
+        $this->select = "*";
+        $this->where = [];
+        $this->active_where = [];
+        $this->parameters = [];
+        $this->limit = [];
+        $this->order_by = [];
     }
 }
