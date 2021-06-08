@@ -18,16 +18,16 @@ class Application {
     /**
      * @var string
      */
-    private string $_root_directory;
+    private string $_root_project_directory;
 
     /**
      * @var ApplicationContext
      */
     private ApplicationContext $_context;
 
-    public function __construct($root)
+    public function __construct($root_project_directory)
     {
-        $this->_root_directory = rtrim($root, "/");
+        $this->_root_project_directory = rtrim($root_project_directory, "/");
 
         require_once __DIR__ . '/../../macro_functions.php';
         session_start();
@@ -40,7 +40,7 @@ class Application {
      */
     public function dispatch(Request $request): ResponseInterface
     {
-        $this->_context = new ApplicationContext($this->_root_directory, $request);
+        $this->_context = new ApplicationContext($this->_root_project_directory, $request);
 
         $uri = new Uri($request->server()->uri());
 
@@ -52,11 +52,11 @@ class Application {
                 $controller = new $controller_path($this->_context);
 
                 if(!$controller->routes_request_auth) {
-                    throw new Exception("$controller_path must be implement route definitions");
+                    throw new Exception("$controller_path must implement route definitions");
                 }
 
                 if(!array_key_exists($match_result->route()->getName(), $controller->routes_request_auth)) {
-                    throw new Exception("$controller_path must be implement route definition for {$match_result->route()->getName()}");
+                    throw new Exception("$controller_path must implement route definition for {$match_result->route()->getName()}");
                 }
 
                 if($controller->routes_request_auth[$match_result->route()->getName()] && !$this->getContext()->auth()->isAuth()) {
