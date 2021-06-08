@@ -6,6 +6,7 @@ use Parad0xeSimpleFramework\Core\http\Uri;
 use Parad0xeSimpleFramework\Core\http\UriMatcher;
 use Parad0xeSimpleFramework\Core\Request\Request;
 use Parad0xeSimpleFramework\Core\Response\EmptyResponse;
+use Parad0xeSimpleFramework\Core\Response\JsonResponse;
 use Parad0xeSimpleFramework\Core\Response\RedirectResponse;
 use Parad0xeSimpleFramework\Core\Response\Response;
 use Parad0xeSimpleFramework\Core\Response\ResponseInterface;
@@ -60,7 +61,7 @@ class Application {
                 }
 
                 if($controller->routes_request_auth[$match_result->route()->getName()] && !$this->getContext()->auth()->isAuth()) {
-                    if($this->_context->request()->cookie()->has($this->_context->getConfig()->getAll()["first_connection_cookiekey"]))
+                    if($this->_context->request()->cookie()->has($this->_context->config()->getAll()["first_connection_cookiekey"]))
                         $this->_context->request()->flash()->push("errors", "You must be logged.");
                     return new RedirectResponse("/auth/login");
                 } elseif(!$controller->routes_request_auth[$match_result->route()->getName()] && $this->getContext()->auth()->isAuth()) {
@@ -85,6 +86,10 @@ class Application {
                 }
 
                 $response =  call_user_func_array([$controller, $match_result->route()->getAction()], $method_args);
+
+                if($response instanceof JsonResponse) {
+                    die($response->render());
+                }
 
                 return ($response) ? $response : new EmptyResponse();
             }

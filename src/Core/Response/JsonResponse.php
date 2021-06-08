@@ -9,7 +9,7 @@ class JsonResponse implements ResponseInterface
     /**
      * @var array
      */
-    private array $args;
+    private array $_args;
 
     /**
      * Response constructor.
@@ -17,7 +17,7 @@ class JsonResponse implements ResponseInterface
      */
     public function __construct(array $args = [])
     {
-        $this->args = $args;
+        $this->_args = $args;
     }
 
     /**
@@ -25,6 +25,6 @@ class JsonResponse implements ResponseInterface
      */
     public function render(): string
     {
-        return json_encode($this->args);
+        return json_encode($this->_args);
     }
 }

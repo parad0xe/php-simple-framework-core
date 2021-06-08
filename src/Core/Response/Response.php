@@ -41,7 +41,7 @@ class Response implements ResponseInterface
      */
     public function render(): string
     {
-        if(!file_exists("{$this->context->getConfig()->getPagesDir()}/{$this->page}.php")) {
+        if(!file_exists("{$this->context->config()->getPagesDir()}/{$this->page}.php")) {
             return $this->__load("errors/404");
         }
 
@@ -56,11 +56,11 @@ class Response implements ResponseInterface
         extract($this->args);
         $context = $this->context;
 
-        if(!file_exists("{$this->context->getConfig()->getPagesDir()}/{$page}.php"))
+        if(!file_exists("{$this->context->config()->getPagesDir()}/{$page}.php"))
             return "";
 
         ob_start();
-        include("{$this->context->getConfig()->getPagesDir()}/{$page}.php");
+        include("{$this->context->config()->getPagesDir()}/{$page}.php");
         return ob_get_clean();
     }
 }

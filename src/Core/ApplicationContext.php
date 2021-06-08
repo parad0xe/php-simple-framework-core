@@ -4,6 +4,7 @@
 namespace Parad0xeSimpleFramework\Core;
 
 use Exception;
+use Parad0xeSimpleFramework\Core\Database\Database;
 use Parad0xeSimpleFramework\Core\Request\Request;
 use Parad0xeSimpleFramework\Core\Route\RouteMap;
 use PDO;
@@ -28,7 +29,7 @@ class ApplicationContext
     /**
      * @var Database
      */
-    private Database $_bdd;
+    private Database $_database;
 
     /**
      * @var Configuration
@@ -51,7 +52,7 @@ class ApplicationContext
         $this->_config = new Configuration($this->_root_directory);
         $this->_auth = new Auth($request);
         $this->_request = $request;
-        $this->_bdd = new Database($this);
+        $this->_database = new Database($this);
         $this->_route_map = new RouteMap($this);
     }
 
@@ -72,17 +73,17 @@ class ApplicationContext
     }
 
     /**
-     * @return PDO|null
+     * @return Database|null
      */
-    public function bdd()
+    public function database()
     {
-        return $this->_bdd->pdo();
+        return $this->_database;
     }
 
     /**
      * @return Configuration
      */
-    public function getConfig() {
+    public function config() {
         return $this->_config;
     }
 

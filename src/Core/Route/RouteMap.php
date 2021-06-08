@@ -87,7 +87,7 @@ class RouteMap
      * @param ApplicationContext $context
      */
     private function __load(ApplicationContext $context) {
-        $controllers_path = $context->getConfig()->getRootDir() . "/src/Controller";
+        $controllers_path = $context->config()->getRootDir() . "/src/Controller";
 
         if(!file_exists($controllers_path)) return;
 
