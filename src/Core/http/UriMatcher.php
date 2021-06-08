@@ -19,7 +19,12 @@ class UriMatcher
         $match_data = $this->__parseMatchData($uri, $route, $route_uri);
 
         $regex = "/^" . str_replace("/", "\/", $match_data['regex_uri']) . "$/";
-        if(strpos($match_data['uri'], $uri->getUri()) !== false && preg_match($regex, $match_data['uri'])) {
+        $uri_start_with = explode("/:", $route_uri->getUri())[0];
+        if(
+            (
+                startsWith($uri->getUri(), $uri_start_with) !== false ||
+                startsWith($uri->getUri() . "/index", $uri_start_with) !== false
+            ) && preg_match($regex, $match_data['uri'])) {
             $route_uri->addUriParameters($uri->getUriParameters());
             $route_uri->addUriParameters($match_data["parameters"]);
             return new UriMatcherResult($route, $route_uri, $match_data["parameters"]);
