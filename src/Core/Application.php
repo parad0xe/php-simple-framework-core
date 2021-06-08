@@ -50,6 +50,13 @@ class Application {
 
             if($match_result) {
                 $controller_path = $match_result->route()->getController();
+
+                if($match_result->route()->getName() === "root")
+                    return new RedirectResponse($this->_context->config()->getEndpoints()["home_url"]);
+
+                if(!class_exists($controller_path))
+                    return new Response($this->_context, "errors/404");
+
                 $controller = new $controller_path($this->_context);
 
                 if(!$controller->routes_request_auth) {
