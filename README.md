@@ -61,6 +61,38 @@ return [
 Create directory `pages` in your root project directory\
 Create directory `Controller` in your src project directory
 
+### Index
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+use Parad0xeSimpleFramework\Core\Application;
+use Parad0xeSimpleFramework\Core\Request\Request;
+
+$app = new Application(__DIR__);
+try {
+    $response = $app->dispatch(new Request($_POST, $_GET));
+} catch (Exception $e) {
+    die($e->getMessage());
+}
+?>
+
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+    </head>
+    <body>
+        <?= $response->render() ?>
+    </body>
+</html>
+```
+
 ### Controller
 
 ```php
