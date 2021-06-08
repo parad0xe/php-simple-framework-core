@@ -63,10 +63,10 @@ class Application {
                 if($controller->routes_request_auth[$match_result->route()->getName()] && !$this->getContext()->auth()->isAuth()) {
                     if($this->_context->request()->cookie()->has($this->_context->config()->getAll()["first_connection_cookiekey"]))
                         $this->_context->request()->flash()->push("errors", "You must be logged.");
-                    return new RedirectResponse("/auth/login");
+                    return new RedirectResponse($this->_context->config()->getEndpoints()["auth_url"]);
                 } elseif(!$controller->routes_request_auth[$match_result->route()->getName()] && $this->getContext()->auth()->isAuth()) {
                     $this->_context->request()->flash()->push("errors", "You must be logout.");
-                    return new RedirectResponse("/dashboard/index");
+                    return new RedirectResponse($this->_context->config()->getEndpoints()["home_url"]);
                 }
 
                 try {

@@ -58,6 +58,9 @@ class Uri
         return $this->uri_parameters;
     }
 
+    /**
+     * @param $parameters
+     */
     public function addUriParameters($parameters) {
         if(is_array($parameters))
             $this->uri_parameters = array_merge($this->uri_parameters, $parameters);
@@ -65,22 +68,27 @@ class Uri
             $this->uri_parameters[] = $parameters;
     }
 
+    /**
+     * @param $uri
+     */
     private function __parseUri($uri) {
         $uri = trim($uri, "/");
 
         $exploded_uri = explode("/", $uri);
+        $exploded_uri = ($exploded_uri[0] === "") ? [] : $exploded_uri;
 
-        if (count($exploded_uri) == 1) {
-            $url_data[1] = "index";
-        } elseif(count($exploded_uri) == 0) {
-            $url_data[0] = "dashboard";
-            $url_data[1] = "index";
-        }
+        if(count($exploded_uri) == 0) {
+            $url_data[0] = "errors";
+            $url_data[1] = "404";
+        } else $url_data = $exploded_uri;
 
-        $this->uri = "/" . implode("/", $exploded_uri);
+        $this->uri = "/" . implode("/", $url_data);
         $this->exploded_uri = $exploded_uri;
     }
 
+    /**
+     * @param $parameters
+     */
     private function __parseParameters($parameters) {
         $this->uri_parameters = array_reduce(explode("&", $parameters), function($a, $v) {
             $arg = explode("=", $v);

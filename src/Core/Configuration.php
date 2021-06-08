@@ -26,6 +26,9 @@ class Configuration
 
         /** @noinspection PhpIncludeInspection */
         $this->_config = require_once($root_directory . '/app_configuration.php');
+
+        foreach ($this->_config["endpoints"] as $k => $endpoint)
+            $this->_config["endpoints"][$k] = "/" . trim($endpoint, "/");
     }
 
     /**
@@ -50,6 +53,13 @@ class Configuration
     public function getPagesDir()
     {
         return $this->_config["app_page_dir"];
+    }
+
+    /**
+     * @return array
+     */
+    public function getEndpoints() {
+        return $this->_config["endpoints"];
     }
 
     /**

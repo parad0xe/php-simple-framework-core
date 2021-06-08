@@ -106,17 +106,15 @@ class RouteMap
                 if($method->isPublic() && !startsWith($method->getName(), "__")) {
                     $attributes = $method->getAttributes(Route::class);
                     foreach ($attributes as $attribute) {
-                        $snake_method_name = ltrim(strtolower(preg_replace('/[A-Z]/', '_$0', $method->getName())), '_');
                         $route_name = $lower_controller_name . ":" . $method->getName();
 
                         $name = $attribute->getArguments()[0] ?? $route_name;
                         $url = $attribute->getArguments()[1] ?? "/$lower_controller_name/{$method->getName()}";
-                        $page = $attribute->getArguments()[2] ?? "$lower_controller_name/$snake_method_name";
+                        $parameters = $attribute->getArguments()[2] ?? [];
                         $controller = $v;
                         $action = $method->getName();
-                        $parameters = $attribute->getArguments()[3] ?? [];
 
-                        $route = (new Route($name, $url, $page, $parameters))
+                        $route = (new Route($name, $url, $parameters))
                             ->setController($controller)
                             ->setAction($action);
 

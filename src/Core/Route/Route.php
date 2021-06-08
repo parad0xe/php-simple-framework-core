@@ -17,11 +17,6 @@ class Route
     private string $uri;
 
     /**
-     * @var string
-     */
-    private string $page;
-
-    /**
      * @var array
      */
     private array $parameters = [];
@@ -36,11 +31,10 @@ class Route
      */
     private string $action;
 
-    public function __construct(string $name = null, string $uri = null, string $page = "", $parameters = [])
+    public function __construct(string $name = null, string $uri = null, $parameters = [])
     {
         $this->name = $name;
         $this->uri = $uri;
-        $this->page = $page;
         $this->parameters = $parameters;
     }
 
@@ -58,14 +52,6 @@ class Route
     public function getUri(): string
     {
         return $this->uri;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPage(): string
-    {
-        return $this->page;
     }
 
     /**

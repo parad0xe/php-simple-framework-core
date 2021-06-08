@@ -42,6 +42,10 @@ return [
     "app_root_dir" => __DIR__,
     "app_public_dir" => __DIR__,
     "app_page_dir" => __DIR__ . "/pages",
+    "endpoints" => [
+        "home_url" => "dashboard/index",
+        "auth_url" => "auth/login"
+    ],
     "database" => [
         "connect_database" => false,
         "user" => "",
@@ -91,8 +95,7 @@ $app = new SimpleApplication(__DIR__);
 
 > The framework return `pages/errors/404.php` if the requested url does not correspond to any route
 
-
-`src/Controller/ExampleController.php`
+`src/Controller/FooController.php`
 
 ```php
 <?php
@@ -102,25 +105,26 @@ namespace App\Controller;
 use Parad0xeSimpleFramework\Core\AbstractController;
 use Parad0xeSimpleFramework\Core\Route\Route;
 
-class ExampleController extends AbstractController
+class FooController extends AbstractController
 {
     public ?array $routes_request_auth = [
-        "api:index" => false,
-        "api:time" => false
+        "foo:index" => false,
+        "foo:post:view" => false
     ];
 
-    #[Route("api:index", "/api/index", "api/index")]
+    #[Route("foo:index", "/foo/index")]
     public function index() {
         return $this->render("api/index", [
             "name" => "Hello World"
         ]); // return 'pages/api/index.php' (with args: $name)
     }
 
-    #[Route("api:time", "/api/time/:id/:slug", null, ["id" => ["default" => 1, "regex" => "\d+"],"slug" => ["default" => "james", "regex" => "[a-zA-Z]+(-[a-zA-Z0-9]+)*"]])]
+    #[Route("foo:post:view", "/foo/post/:id/:slug", ["id" => ["default" => 1, "regex" => "\d+"],"slug" => ["default" => "james", "regex" => "[a-zA-Z]+(-[a-zA-Z0-9]+)*"]])]
     public function getTime(int $id, string $slug) {
         return $this->json([
             "id" => $id,
             "slug" => $slug,
+            "content" => "lorem ipsum",
             "time" => time()
         ]);
     }
