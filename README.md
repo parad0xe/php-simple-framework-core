@@ -1,5 +1,7 @@
 # PHP-SIMPLE-FRAMEWORK
 
+> php \>= 8.0
+
 ## Installation
 
 In your composer.json add:
@@ -90,6 +92,8 @@ $app = new SimpleApplication(__DIR__);
 > The framework return `pages/errors/404.php` if the requested url does not correspond to any route
 
 
+`src/Controller/ExampleController.php`
+
 ```php
 <?php
 
@@ -98,7 +102,7 @@ namespace App\Controller;
 use Parad0xeSimpleFramework\Core\AbstractController;
 use Parad0xeSimpleFramework\Core\Route\Route;
 
-class ApiController extends AbstractController
+class ExampleController extends AbstractController
 {
     public ?array $routes_request_auth = [
         "api:index" => false,

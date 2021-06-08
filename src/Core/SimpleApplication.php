@@ -1,11 +1,10 @@
 <?php
 
 
-namespace Parad0xeFramework\Core;
+namespace Parad0xeSimpleFramework\Core;
 
 
 use Exception;
-use Parad0xeSimpleFramework\Core\Application;
 use Parad0xeSimpleFramework\Core\Request\Request;
 use Parad0xeSimpleFramework\Core\Response\ResponseInterface;
 
