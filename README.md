@@ -66,15 +66,15 @@ Create directory `Controller` in your src project directory
 ```php
 <?php
 
-
 namespace App\Controller;
 
-use Parad0xeSimpleFramework\Core\Route\Route;
 use Parad0xeSimpleFramework\Core\AbstractController;
+use Parad0xeSimpleFramework\Core\Route\Route;
 
 class ApiController extends AbstractController
 {
     public ?array $routes_request_auth = [
+        "api:index" => false,
         "api:time" => false
     ];
 
@@ -85,12 +85,7 @@ class ApiController extends AbstractController
         ]); // return 'pages/api/index.php' (with args: $name)
     }
 
-    #[
-        Route("api:time", "/api/time/:id/:slug", null, [
-            "id" => ["default" => 1, "regex" => "\d+"],
-            "slug" => ["default" => "james", "regex" => "[a-zA-Z]+(-[a-zA-Z0-9]+)*"]
-        ])
-    ]
+    #[Route("api:time", "/api/time/:id/:slug", null, ["id" => ["default" => 1, "regex" => "\d+"],"slug" => ["default" => "james", "regex" => "[a-zA-Z]+(-[a-zA-Z0-9]+)*"]])]
     public function getTime(int $id, string $slug) {
         return $this->json([
             "id" => $id,
