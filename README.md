@@ -2,14 +2,6 @@
 
 ## Installation
 
-Create directory `libs` in your root project
-
-Download repository in `/libs` directory
-
-```bash
-git clone https://github.com/parad0xe/php-simple-framework-core.git
-```
-
 In your composer.json add:
 
 ```json
@@ -19,14 +11,18 @@ In your composer.json add:
             "type": "path",
             "url": "libs/php-simple-framework-core"
         }
-    ]
+    ],
+    "scripts": {
+        "framework:install": "mkdir libs && git -C libs clone https://github.com/parad0xe/php-simple-framework-core.git && composer require parad0xe/php-simple-framework-core",
+        "framework:update": "rm -rf libs/php-simple-framework-core && git -C libs clone https://github.com/parad0xe/php-simple-framework-core.git"
+    }
 }
 ```
 
 Then, install it:
 
 ```bash
-composer require parad0xe/php-simple-framework-core
+composer run framework:install
 ```
 
 ## Configuration
