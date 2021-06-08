@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Parad0xeSimpleFramework\Core\http;
+namespace Parad0xeSimpleFramework\Core\Http;
 
 use Parad0xeSimpleFramework\Core\Route\Route;
 
@@ -19,12 +19,16 @@ class UriMatcher
         $match_data = $this->__parseMatchData($uri, $route, $route_uri);
 
         $regex = "/^" . str_replace("/", "\/", $match_data['regex_uri']) . "$/";
-        $uri_start_with = explode("/:", $route_uri->getUri())[0];
+        $uri_start_with = explode("/:", $uri->getUri())[0];
+        $route_uri_start_with = explode("/:", $route_uri->getUri())[0];
         if(
             (
-                startsWith($uri->getUri(), $uri_start_with) !== false ||
-                startsWith($uri->getUri() . "/index", $uri_start_with) !== false
-            ) && preg_match($regex, $match_data['uri'])) {
+                (startsWith($uri->getUri(), $route_uri_start_with) !== false && strlen($uri->getUri()) <= $route_uri_start_with) ||
+                startsWith($uri->getUri() . "/index", $route_uri_start_with) !== false
+            ) &&
+            preg_match($regex, $match_data['uri']) &&
+            strpos($route_uri_start_with, $uri_start_with) !== false
+        ) {
             $route_uri->addUriParameters($uri->getUriParameters());
             $route_uri->addUriParameters($match_data["parameters"]);
             return new UriMatcherResult($route, $route_uri, $match_data["parameters"]);

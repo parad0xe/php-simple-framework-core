@@ -2,8 +2,8 @@
 
 namespace Parad0xeSimpleFramework\Core;
 
-use Parad0xeSimpleFramework\Core\http\Uri;
-use Parad0xeSimpleFramework\Core\http\UriMatcher;
+use Parad0xeSimpleFramework\Core\Http\Uri;
+use Parad0xeSimpleFramework\Core\Http\UriMatcher;
 use Parad0xeSimpleFramework\Core\Request\Request;
 use Parad0xeSimpleFramework\Core\Response\EmptyResponse;
 use Parad0xeSimpleFramework\Core\Response\JsonResponse;

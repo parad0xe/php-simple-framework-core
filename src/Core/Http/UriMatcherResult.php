@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Parad0xeSimpleFramework\Core\http;
+namespace Parad0xeSimpleFramework\Core\Http;
 
 
 use Parad0xeSimpleFramework\Core\Route\Route;
