@@ -68,15 +68,9 @@ Create directory `Controller` in your src project directory
 
 require 'vendor/autoload.php';
 
-use Parad0xeSimpleFramework\Core\Application;
-use Parad0xeSimpleFramework\Core\Request\Request;
+use Parad0xeFramework\Core\SimpleApplication;
 
-$app = new Application(__DIR__);
-try {
-    $response = $app->dispatch(new Request($_POST, $_GET));
-} catch (Exception $e) {
-    die($e->getMessage());
-}
+$app = new SimpleApplication(__DIR__);
 ?>
 
 <!doctype html>
@@ -88,7 +82,7 @@ try {
         <title>Document</title>
     </head>
     <body>
-        <?= $response->render() ?>
+        <?= $app->getResponse()->render() ?>
     </body>
 </html>
 ```
