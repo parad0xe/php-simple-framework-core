@@ -5,14 +5,13 @@ namespace Parad0xeSimpleFramework\Core;
 
 
 use Parad0xeSimpleFramework\Core\Request\Request;
-use Parad0xeSimpleFramework\Entity\User;
 
 class Auth
 {
     /**
      * @var Request
      */
-    private $request;
+    private Request $request;
 
     public function __construct(Request $request)
     {
@@ -28,16 +27,16 @@ class Auth
     }
 
     /**
-     * @return User|null
+     * @return mixed
      */
     public function user() {
         return ($this->isAuth()) ? $this->request->session()->get("user") : null;
     }
 
     /**
-     * @param User $user
+     * @param mixed $user
      */
-    public function login(User $user) {
+    public function login($user) {
         $this->request->session()->set("user", $user);
     }
 
