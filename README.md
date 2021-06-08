@@ -1,4 +1,4 @@
-# PHP-FRAMEWORK-CORE
+# PHP-SIMPLE-FRAMEWORK
 
 ## Installation
 
@@ -95,6 +95,11 @@ try {
 
 ### Controller
 
+> All Controller name must end with 'Controller'
+
+> The framework return `pages/errors/404.php` if the requested url does not correspond to any route
+
+
 ```php
 <?php
 
@@ -127,5 +132,3 @@ class ApiController extends AbstractController
     }
 }
 ```
-
-> The framework return `pages/errors/404.php` if the requested url does not correspond to any route

@@ -22,7 +22,7 @@ class UriMatcher
         if(strpos($match_data['uri'], $uri->getUri()) !== false && preg_match($regex, $match_data['uri'])) {
             $route_uri->addUriParameters($uri->getUriParameters());
             $route_uri->addUriParameters($match_data["parameters"]);
-            return new UriMatcherResult($route, $route_uri, $match_data["parameters"], false);
+            return new UriMatcherResult($route, $route_uri, $match_data["parameters"]);
         }
 
         return null;
