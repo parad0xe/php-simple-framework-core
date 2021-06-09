@@ -8,76 +8,50 @@ use stdClass;
 
 class Configuration
 {
-    /**
-     * @var array
-     */
-    private $_config;
+    private string $_root_project_directory;
+
+    private array $_configuration = [];
 
     /**
      * Configuration constructor.
-     * @param $root_directory
+     * @param $root_project_directory
      * @throws Exception
      */
-    public function __construct($root_directory)
+    public function __construct($root_project_directory)
     {
-        if(!file_exists($root_directory . '/app_configuration.php')) {
-            throw new Exception("Missing 'app_configuration.php' file.");
+        $this->_root_project_directory = $root_project_directory;
+
+        if(!file_exists($root_project_directory . '/config/framework.yml')) {
+            throw new Exception("Missing '$root_project_directory/config/framework.yml' file.");
         }
 
-        /** @noinspection PhpIncludeInspection */
-        $this->_config = require_once($root_directory . '/app_configuration.php');
-
-        foreach ($this->_config["endpoints"] as $k => $endpoint)
-            $this->_config["endpoints"][$k] = "/" . trim($endpoint, "/");
+        $res = \yaml_parse_file($root_project_directory . '/config/framework.yml');
+        $this->__parseConfig($res);
     }
 
     /**
-     * @return string
+     * @param $key
+     * @return mixed|null
      */
-    public function getRootDir()
+    public function get($key)
     {
-        return $this->_config["app_root_dir"];
+        if(array_key_exists($key, $this->_configuration))
+            return $this->_configuration[$key];
+
+        return null;
     }
 
-    /**
-     * @return string
-     */
-    public function getPublicDir()
-    {
-        return $this->_config["app_public_dir"];
-    }
+    private function __parseConfig($data, $base_key = "") {
+        foreach ($data as $k => $v) {
+            $current_key = ($base_key === "") ? $k : "$base_key.$k";
 
-    /**
-     * @return string
-     */
-    public function getPagesDir()
-    {
-        return $this->_config["app_page_dir"];
-    }
+            if(is_array($v)) {
+                $this->__parseConfig($v, $current_key);
+            } else {
+                $v = str_replace("%root%", $this->_root_project_directory, $v);
 
-    /**
-     * @return array
-     */
-    public function getEndpoints() {
-        return $this->_config["endpoints"];
-    }
-
-    /**
-     * @return stdClass
-     */
-    public function getDatabaseConfig() {
-        $o = new stdClass();
-
-        foreach ($this->_config["database"] as $db_conf_key => $db_conf_value)
-            $o->$db_conf_key = $db_conf_value;
-
-        return $o;
-    }
-
-    /**
-     * @return array
-     */
-    public function getAll() {
-        return $this->_config;
+                $this->_configuration[$current_key] = $v;
+            }
+        }
     }
 }

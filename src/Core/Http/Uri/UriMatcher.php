@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Parad0xeSimpleFramework\Core\Http;
+namespace Parad0xeSimpleFramework\Core\Http\Uri;
 
 use Parad0xeSimpleFramework\Core\Route\Route;
 
@@ -19,7 +19,6 @@ class UriMatcher
         $match_data = $this->__parseMatchData($uri, $route, $route_uri);
 
         $regex = "/^" . str_replace("/", "\/", $match_data['regex_uri']) . "$/";
-        $uri_start_with = explode("/:", $uri->getUri())[0];
         $route_uri_start_with = explode("/:", $route_uri->getUri())[0];
         if(
             (
@@ -27,7 +26,7 @@ class UriMatcher
                 startsWith($uri->getUri() . "/index", $route_uri_start_with) !== false
             ) &&
             preg_match($regex, $match_data['uri']) &&
-            strpos($route_uri_start_with, $uri_start_with) !== false
+            (preg_match($regex, $uri->getUri()) || strpos($match_data["uri"], $uri->getUri()) !== false)
         ) {
             $route_uri->addUriParameters($uri->getUriParameters());
             $route_uri->addUriParameters($match_data["parameters"]);
@@ -61,7 +60,7 @@ class UriMatcher
                     }
                 } elseif(array_key_exists($expected_parameter, $route->getParameters()) && array_key_exists("default", $route->getParameters()[$expected_parameter])) {
                     $a["uri"] = str_replace($expected_url_parameter[$index], $route->getParameters()[$expected_parameter]["default"], $a["uri"]);
-                    $a["regex_uri"] = str_replace($expected_url_parameter[$index], $route->getParameters()[$expected_parameter]["default"], $a["regex_uri"]);
+                    $a["regex_uri"] = str_replace($expected_url_parameter[$index], $route->getParameters()[$expected_parameter]["regex"], $a["regex_uri"]);
                     $a["parameters"][$expected_parameter] = $route->getParameters()[$expected_parameter]["default"];
                 }
             }

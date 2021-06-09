@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Parad0xeSimpleFramework\Core\Http;
+namespace Parad0xeSimpleFramework\Core\Http\Uri;
 
 
 class Uri

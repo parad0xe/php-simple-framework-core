@@ -8,20 +8,13 @@ use Parad0xeSimpleFramework\Core\ApplicationContext;
 
 class Response implements ResponseInterface
 {
-    /**
-     * @var ApplicationContext
-     */
     private ApplicationContext $context;
 
-    /**
-     * @var string|null
-     */
     private ?string $page;
 
-    /**
-     * @var array
-     */
     private array $args;
+
+    private string $page_directory;
 
     /**
      * Response constructor.
@@ -34,6 +27,7 @@ class Response implements ResponseInterface
         $this->context = $context;
         $this->page = ($page) ? ltrim(strtolower(preg_replace('/[A-Z]/', '_$0', $page)), '_') : null;
         $this->args = $args;
+        $this->page_directory = $this->context->config()->get('app.directory.pages');
     }
 
     /**
@@ -41,7 +35,7 @@ class Response implements ResponseInterface
      */
     public function render(): string
     {
-        if(!file_exists("{$this->context->config()->getPagesDir()}/{$this->page}.php")) {
+        if(!file_exists("{$this->page_directory}/{$this->page}.php")) {
             return $this->__load("errors/404");
         }
 
@@ -56,11 +50,11 @@ class Response implements ResponseInterface
         extract($this->args);
         $context = $this->context;
 
-        if(!file_exists("{$this->context->config()->getPagesDir()}/{$page}.php"))
+        if(!file_exists("{$this->page_directory}/{$page}.php"))
             return "";
 
         ob_start();
-        include("{$this->context->config()->getPagesDir()}/{$page}.php");
+        include("{$this->page_directory}/{$page}.php");
         return ob_get_clean();
     }
 }

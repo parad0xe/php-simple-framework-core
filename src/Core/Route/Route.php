@@ -31,7 +31,7 @@ class Route
      */
     private string $action;
 
-    public function __construct(string $name = null, string $uri = null, $parameters = [])
+    public function __construct(string $name = null, string $uri = null, array $parameters = [])
     {
         $this->name = $name;
         $this->uri = $uri;

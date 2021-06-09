@@ -15,12 +15,17 @@ class SimpleApplication extends Application
      */
     private ResponseInterface $response;
 
-    public function __construct($root_project_directory)
+    /**
+     * SimpleApplication constructor.
+     * @param $root_project_directory
+     * @param array $env
+     */
+    public function __construct($root_project_directory, array $env = [])
     {
         parent::__construct($root_project_directory);
 
         try {
-            $this->response = $this->dispatch(new Request($_POST, $_GET));
+            $this->response = $this->dispatch(new Request($env));
         } catch (Exception $e) {
             die($e->getMessage());
         }

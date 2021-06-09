@@ -9,8 +9,16 @@ class Server extends RequestBag
     /**
      * @return string
      */
-    public function uri(): string
+    public function uri(): ?string
     {
         return $this->get("REQUEST_URI");
+    }
+
+    /**
+     * @return string
+     */
+    public function method(): ?string
+    {
+        return $this->get("REQUEST_METHOD");
     }
 }

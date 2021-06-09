@@ -1,10 +1,11 @@
 <?php
 
 
-namespace Parad0xeSimpleFramework\Core;
+namespace Parad0xeSimpleFramework\Core\Http\Repository;
 
 
 use Exception;
+use Parad0xeSimpleFramework\Core\ApplicationContext;
 use Parad0xeSimpleFramework\Core\Database\Builder\QueryBuilder;
 
 class AbstractRepository

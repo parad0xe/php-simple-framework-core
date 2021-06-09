@@ -4,6 +4,7 @@
 namespace Parad0xeSimpleFramework\Core;
 
 use Exception;
+use Parad0xeSimpleFramework\Core\Auth\Auth;
 use Parad0xeSimpleFramework\Core\Database\Database;
 use Parad0xeSimpleFramework\Core\Request\Request;
 use Parad0xeSimpleFramework\Core\Route\RouteMap;
@@ -14,7 +15,7 @@ class ApplicationContext
     /**
      * @var string
      */
-    private string $_root_directory;
+    private string $_root_project_directory;
 
     /**
      * @var Auth
@@ -42,14 +43,14 @@ class ApplicationContext
 
     /**
      * ApplicationContext constructor.
-     * @param string $root_directory
+     * @param string $root_project_directory
      * @param Request $request
      * @throws Exception
      */
-    public function __construct(string $root_directory, Request $request)
+    public function __construct(string $root_project_directory, Request $request)
     {
-        $this->_root_directory = $root_directory;
-        $this->_config = new Configuration($this->_root_directory);
+        $this->_root_project_directory = $root_project_directory;
+        $this->_config = new Configuration($this->_root_project_directory);
         $this->_auth = new Auth($request);
         $this->_request = $request;
         $this->_database = new Database($this);

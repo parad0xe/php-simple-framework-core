@@ -1,9 +1,10 @@
 <?php
 
 
-namespace Parad0xeSimpleFramework\Core;
+namespace Parad0xeSimpleFramework\Core\Http\Controller;
 
 
+use Parad0xeSimpleFramework\Core\ApplicationContext;
 use Parad0xeSimpleFramework\Core\Response\JsonResponse;
 use Parad0xeSimpleFramework\Core\Response\RedirectResponse;
 use Parad0xeSimpleFramework\Core\Response\Response;

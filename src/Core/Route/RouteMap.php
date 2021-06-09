@@ -22,7 +22,7 @@ class RouteMap
 
     /**
      * @param string $route_name
-     * @return stdClass|null
+     * @return Route|null
      */
     public function get(string $route_name) {
         if(array_key_exists($route_name, $this->_route_map)) {
@@ -39,20 +39,7 @@ class RouteMap
      */
     public function url(string $route_name, array $params = []) {
         if(($route = $this->get($route_name)))
-            return $route->url . $this->__urlParamsEncode($params);
-
-        return null;
-    }
-
-    /**
-     * @param string $route_name
-     * @return string|null
-     */
-    public function page(string $route_name) {
-
-        if(($route = $this->get($route_name))) {
-            return $route->page;
-        }
+            return $route->getUri() . $this->__urlParamsEncode($params);
 
         return null;
     }
@@ -87,7 +74,7 @@ class RouteMap
      * @param ApplicationContext $context
      */
     private function __load(ApplicationContext $context) {
-        $controllers_path = $context->config()->getRootDir() . "/src/Controller";
+        $controllers_path = $context->config()->get("app.directory.root") . "/src/Controller";
 
         if(!file_exists($controllers_path)) return;
 

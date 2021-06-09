@@ -2,11 +2,10 @@
 
 namespace Parad0xeSimpleFramework\Core;
 
-use Parad0xeSimpleFramework\Core\Http\Uri;
-use Parad0xeSimpleFramework\Core\Http\UriMatcher;
+use Parad0xeSimpleFramework\Core\Http\Uri\Uri;
+use Parad0xeSimpleFramework\Core\Http\Uri\UriMatcher;
 use Parad0xeSimpleFramework\Core\Request\Request;
 use Parad0xeSimpleFramework\Core\Response\EmptyResponse;
-use Parad0xeSimpleFramework\Core\Response\JsonResponse;
 use Parad0xeSimpleFramework\Core\Response\RedirectResponse;
 use Parad0xeSimpleFramework\Core\Response\Response;
 use Parad0xeSimpleFramework\Core\Response\ResponseInterface;
@@ -31,7 +30,9 @@ class Application {
         $this->_root_project_directory = rtrim($root_project_directory, "/");
 
         require_once __DIR__ . '/../../macro_functions.php';
-        session_start();
+
+        if(session_status() === PHP_SESSION_NONE)
+            session_start();
     }
 
     /**
@@ -43,7 +44,7 @@ class Application {
     {
         $this->_context = new ApplicationContext($this->_root_project_directory, $request);
 
-        $uri = new Uri($request->server()->uri());
+        $uri = new Uri($request->uri());
 
         foreach($this->_context->route()->all() as $route) {
             $match_result = (new UriMatcher())->match($uri, $route);
@@ -52,7 +53,7 @@ class Application {
                 $controller_path = $match_result->route()->getController();
 
                 if($match_result->route()->getName() === "root")
-                    return new RedirectResponse($this->_context->config()->getEndpoints()["home_url"]);
+                    return new RedirectResponse($this->_context->config()->get("app.endpoints.home"));
 
                 if(!class_exists($controller_path))
                     return new Response($this->_context, "errors/404");
@@ -68,12 +69,12 @@ class Application {
                 }
 
                 if($controller->routes_request_auth[$match_result->route()->getName()] && !$this->getContext()->auth()->isAuth()) {
-                    if($this->_context->request()->cookie()->has($this->_context->config()->getAll()["first_connection_cookiekey"]))
+                    if($this->_context->request()->cookie()->has($this->_context->config()->get("app.cookie.first_connection")))
                         $this->_context->request()->flash()->push("errors", "You must be logged.");
-                    return new RedirectResponse($this->_context->config()->getEndpoints()["auth_url"]);
+                    return new RedirectResponse($this->_context->config()->get("app.endpoints.auth.login"));
                 } elseif(!$controller->routes_request_auth[$match_result->route()->getName()] && $this->getContext()->auth()->isAuth()) {
                     $this->_context->request()->flash()->push("errors", "You must be logout.");
-                    return new RedirectResponse($this->_context->config()->getEndpoints()["home_url"]);
+                    return new RedirectResponse($this->_context->config()->get("app.endpoints.home"));
                 }
 
                 try {
@@ -93,10 +94,6 @@ class Application {
                 }
 
                 $response =  call_user_func_array([$controller, $match_result->route()->getAction()], $method_args);
-
-                if($response instanceof JsonResponse) {
-                    die($response->render());
-                }
 
                 return ($response) ? $response : new EmptyResponse();
             }

@@ -1,6 +1,33 @@
 # PHP-SIMPLE-FRAMEWORK
 
-> php \>= 8.0
+## Requirements
+
+### PHP
+
+>php \>= 8.0
+
+### Yaml
+
+If you don't have yaml extension
+
+
+Install pecl
+
+```bash
+sudo apt-get install php-pear
+```
+
+Then, install yaml extension
+
+```bash
+pecl install yaml
+```
+
+And add in your php.ini:
+
+```ini
+extension=yaml.so
+```
 
 ## Installation
 
@@ -15,7 +42,7 @@ In your composer.json add:
         }
     ],
     "scripts": {
-        "framework:install": "mkdir libs && git -C libs clone https://github.com/parad0xe/php-simple-framework-core.git && composer require parad0xe/php-simple-framework-core",
+        "framework:install": "mkdir libs && mkdir config && mkdir pages && git -C libs clone https://github.com/parad0xe/php-simple-framework-core.git && composer require parad0xe/php-simple-framework-core && cp libs/php-simple-framework-core/framework.yml config",
         "framework:update": "rm -rf libs/php-simple-framework-core && git -C libs clone https://github.com/parad0xe/php-simple-framework-core.git"
     }
 }
@@ -25,37 +52,6 @@ Then, install it:
 
 ```bash
 composer run framework:install
-```
-
-## Configuration
-
-Add a configuration file (`app_configuration.php`) in your root project
-
-Paste default configuration:
-
-`app_configuration.php`
-
-```php
-<?php
-
-return [
-    "app_root_dir" => __DIR__,
-    "app_public_dir" => __DIR__,
-    "app_page_dir" => __DIR__ . "/pages",
-    "endpoints" => [
-        "home_url" => "dashboard/index",
-        "auth_url" => "auth/login"
-    ],
-    "database" => [
-        "connect_database" => false,
-        "user" => "",
-        "password" => "",
-        "database" => "",
-        "port" => "3306",
-        "host" => "localhost"
-    ],
-    "first_connection_cookiekey" => "__fc"
-];
 ```
 
 ## Usage
@@ -70,7 +66,7 @@ Create directory `Controller` in your src project directory
 
 require 'vendor/autoload.php';
 
-use Parad0xeFramework\Core\SimpleApplication;
+use Parad0xeSimpleFramework\Core\SimpleApplication;
 
 $app = new SimpleApplication(__DIR__);
 ?>
@@ -102,7 +98,7 @@ $app = new SimpleApplication(__DIR__);
 
 namespace App\Controller;
 
-use Parad0xeSimpleFramework\Core\AbstractController;
+use Parad0xeSimpleFramework\Core\Http\Controller\AbstractController;
 use Parad0xeSimpleFramework\Core\Route\Route;
 
 class FooController extends AbstractController
@@ -120,7 +116,7 @@ class FooController extends AbstractController
     }
 
     #[Route("foo:post:view", "/foo/post/:id/:slug", ["id" => ["default" => 1, "regex" => "\d+"],"slug" => ["default" => "james", "regex" => "[a-zA-Z]+(-[a-zA-Z0-9]+)*"]])]
-    public function getTime(int $id, string $slug) {
+    public function view(int $id, string $slug) {
         return $this->json([
             "id" => $id,
             "slug" => $slug,

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Parad0xeSimpleFramework\Core;
+namespace Parad0xeSimpleFramework\Core\Auth;
 
 
 use Parad0xeSimpleFramework\Core\Request\Request;
