@@ -35,6 +35,7 @@ Create empty project
 
 ```bash
 mkdir <project_name>
+cd <project_name>
 ```
 
 Init composer
