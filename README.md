@@ -60,7 +60,7 @@ In your composer.json add:
         }
     ],
     "scripts": {
-        "framework:install": "mkdir libs && git -C libs clone https://github.com/parad0xe/php-simple-framework-core.git && composer require parad0xe/php-simple-framework-core && cp -R libs/parad0xe/php-simple-framework-core/assets/* .",
+        "framework:install": "mkdir libs && git -C libs clone https://github.com/parad0xe/php-simple-framework-core.git && composer require parad0xe/php-simple-framework-core && cp -R libs/php-simple-framework-core/assets/* .",
         "framework:update": "rm -rf libs/php-simple-framework-core && git -C libs clone https://github.com/parad0xe/php-simple-framework-core.git"
     }
 }
