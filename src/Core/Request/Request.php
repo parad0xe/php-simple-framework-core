@@ -12,4 +12,8 @@ class Request
     public function method(): ?string {
         return $this->server()->method();
     }
+
+    public function protocol(): ?string {
+        return $this->server()->protocol();
+    }
 }

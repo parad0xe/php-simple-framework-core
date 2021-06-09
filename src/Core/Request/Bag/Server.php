@@ -6,19 +6,23 @@ use Parad0xeSimpleFramework\Core\Request\RequestBag;
 
 class Server extends RequestBag
 {
-    /**
-     * @return string
-     */
     public function uri(): ?string
     {
         return $this->get("REQUEST_URI");
     }
 
-    /**
-     * @return string
-     */
     public function method(): ?string
     {
         return $this->get("REQUEST_METHOD");
+    }
+
+    public function protocol(): ?string
+    {
+        return $this->get("SERVER_PROTOCOL");
+    }
+
+    public function port(): ?string
+    {
+        return $this->get("SERVER_PORT");
     }
 }

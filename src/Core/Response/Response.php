@@ -35,11 +35,19 @@ class Response implements ResponseInterface
      */
     public function render(): string
     {
-        if(!file_exists("{$this->page_directory}/{$this->page}.php")) {
-            return $this->__load("errors/404");
+        if(!$this->pageIsExist($this->page)) {
+            return $this->__load("errors/default");
         }
 
         return $this->__load($this->page);
+    }
+
+    /**
+     * @param string $page
+     * @return bool
+     */
+    protected function pageIsExist(string $page): bool {
+        return file_exists("{$this->page_directory}/{$page}.php");
     }
 
     /**
@@ -50,7 +58,7 @@ class Response implements ResponseInterface
         extract($this->args);
         $context = $this->context;
 
-        if(!file_exists("{$this->page_directory}/{$page}.php"))
+        if(!$this->pageIsExist($page))
             return "";
 
         ob_start();

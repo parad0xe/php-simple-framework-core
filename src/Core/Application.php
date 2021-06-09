@@ -6,6 +6,7 @@ use Parad0xeSimpleFramework\Core\Http\Uri\Uri;
 use Parad0xeSimpleFramework\Core\Http\Uri\UriMatcher;
 use Parad0xeSimpleFramework\Core\Request\Request;
 use Parad0xeSimpleFramework\Core\Response\EmptyResponse;
+use Parad0xeSimpleFramework\Core\Response\ErrorResponse;
 use Parad0xeSimpleFramework\Core\Response\RedirectResponse;
 use Parad0xeSimpleFramework\Core\Response\Response;
 use Parad0xeSimpleFramework\Core\Response\ResponseInterface;
@@ -58,29 +59,15 @@ class Application
                     return new RedirectResponse($this->_context->route()->get($this->_context->config()->get("app.endpoints.home"))->getUri());
 
                 if (!class_exists($controller_path))
-                    return new Response($this->_context, "errors/404");
+                    return new ErrorResponse($this->_context, 404);
 
                 $controller = new $controller_path($this->_context);
 
-                if (!$controller->routes_request_auth) {
-                    if ($this->_context->config()->get("app.dev")) {
-                        return new Response($this->_context, "errors/500", [
-                            "error" => "'$controller_path' must implement route definitions"
-                        ]);
-                    }
+                if (!$controller->routes_request_auth)
+                    return new ErrorResponse($this->_context, 500, "'$controller_path' must implement route definitions");
 
-                    return new Response($this->_context, "errors/500");
-                }
-
-                if (!array_key_exists($match_result->route()->getName(), $controller->routes_request_auth)) {
-                    if ($this->_context->config()->get("app.dev")) {
-                        return new Response($this->_context, "errors/500", [
-                            "error" => "'$controller_path' must implement route definition for '{$match_result->route()->getName()}'"
-                        ]);
-                    }
-
-                    return new Response($this->_context, "errors/500");
-                }
+                if (!array_key_exists($match_result->route()->getName(), $controller->routes_request_auth))
+                    return new ErrorResponse($this->_context, 500, "'$controller_path' must implement route definition for '{$match_result->route()->getName()}'");
 
                 if ($controller->routes_request_auth[$match_result->route()->getName()] && !$this->getContext()->auth()->isAuth()) {
                     if ($this->_context->request()->cookie()->has($this->_context->config()->get("app.cookie.first_connection")))
@@ -104,24 +91,20 @@ class Application
                         return $a;
                     }, []);
                 } catch (ReflectionException $e) {
-                    if ($this->_context->config()->get("app.dev"))
-                        return new Response($this->_context, "errors/500", ["error" => $e->getMessage()]);
-                    return new Response($this->_context, "errors/500");
+                    return new ErrorResponse($this->_context, 500, $e->getMessage());
                 }
 
                 try {
                     $response = call_user_func_array([$controller, $match_result->route()->getAction()], $method_args);
                 } catch (Throwable $e) {
-                    if ($this->_context->config()->get("app.dev"))
-                        return new Response($this->_context, "errors/500", ["error" => $e->getMessage()]);
-                    return new Response($this->_context, "errors/500");
+                    return new ErrorResponse($this->_context, 500, $e->getMessage());
                 }
 
                 return ($response) ? $response : new EmptyResponse();
             }
         }
 
-        return new Response($this->_context, "errors/404");
+        return new ErrorResponse($this->_context, 404);
     }
 
     public function getContext(): ApplicationContext
