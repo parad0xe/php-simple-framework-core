@@ -13,8 +13,10 @@ use Exception;
 use ReflectionException;
 use ReflectionMethod;
 use ReflectionParameter;
+use Throwable;
 
-class Application {
+class Application
+{
     /**
      * @var string
      */
@@ -31,7 +33,7 @@ class Application {
 
         require_once __DIR__ . '/../../macro_functions.php';
 
-        if(session_status() === PHP_SESSION_NONE)
+        if (session_status() === PHP_SESSION_NONE)
             session_start();
     }
 
@@ -46,43 +48,55 @@ class Application {
 
         $uri = new Uri($request->uri());
 
-        foreach($this->_context->route()->all() as $route) {
+        foreach ($this->_context->route()->all() as $route) {
             $match_result = (new UriMatcher())->match($uri, $route);
 
-            if($match_result) {
+            if ($match_result) {
                 $controller_path = $match_result->route()->getController();
 
-                if($match_result->route()->getName() === "root")
+                if ($match_result->route()->getName() === "root")
                     return new RedirectResponse($this->_context->route()->get($this->_context->config()->get("app.endpoints.home"))->getUri());
 
-                if(!class_exists($controller_path))
+                if (!class_exists($controller_path))
                     return new Response($this->_context, "errors/404");
 
                 $controller = new $controller_path($this->_context);
 
-                if(!$controller->routes_request_auth) {
-                    throw new Exception("$controller_path must implement route definitions");
+                if (!$controller->routes_request_auth) {
+                    if ($this->_context->config()->get("app.dev")) {
+                        return new Response($this->_context, "errors/500", [
+                            "error" => "'$controller_path' must implement route definitions"
+                        ]);
+                    }
+
+                    return new Response($this->_context, "errors/500");
                 }
 
-                if(!array_key_exists($match_result->route()->getName(), $controller->routes_request_auth)) {
-                    throw new Exception("$controller_path must implement route definition for {$match_result->route()->getName()}");
+                if (!array_key_exists($match_result->route()->getName(), $controller->routes_request_auth)) {
+                    if ($this->_context->config()->get("app.dev")) {
+                        return new Response($this->_context, "errors/500", [
+                            "error" => "'$controller_path' must implement route definition for '{$match_result->route()->getName()}'"
+                        ]);
+                    }
+
+                    return new Response($this->_context, "errors/500");
                 }
 
-                if($controller->routes_request_auth[$match_result->route()->getName()] && !$this->getContext()->auth()->isAuth()) {
-                    if($this->_context->request()->cookie()->has($this->_context->config()->get("app.cookie.first_connection")))
+                if ($controller->routes_request_auth[$match_result->route()->getName()] && !$this->getContext()->auth()->isAuth()) {
+                    if ($this->_context->request()->cookie()->has($this->_context->config()->get("app.cookie.first_connection")))
                         $this->_context->request()->flash()->push("errors", "You must be logged.");
                     return new RedirectResponse($this->_context->route()->get($this->_context->config()->get("app.endpoints.auth.login"))->getUri());
-                } elseif(!$controller->routes_request_auth[$match_result->route()->getName()] && $this->getContext()->auth()->isAuth()) {
+                } elseif (!$controller->routes_request_auth[$match_result->route()->getName()] && $this->getContext()->auth()->isAuth()) {
                     $this->_context->request()->flash()->push("errors", "You must be logout.");
                     return new RedirectResponse($this->_context->route()->get($this->_context->config()->get("app.endpoints.home"))->getUri());
                 }
 
                 try {
-                    $method_args = array_reduce((new ReflectionMethod($controller, $match_result->route()->getAction()))->getParameters(), function($a, $v) use ($match_result) {
+                    $method_args = array_reduce((new ReflectionMethod($controller, $match_result->route()->getAction()))->getParameters(), function ($a, $v) use ($match_result) {
                         /**
                          * @var ReflectionParameter $v
                          */
-                        if(array_key_exists($v->name, $match_result->routeParameters())) {
+                        if (array_key_exists($v->name, $match_result->routeParameters())) {
                             $a[] = $match_result->routeParameters()[$v->name];
                         } else {
                             $a[] = null;
@@ -90,10 +104,18 @@ class Application {
                         return $a;
                     }, []);
                 } catch (ReflectionException $e) {
-                    die($e->getMessage());
+                    if ($this->_context->config()->get("app.dev"))
+                        return new Response($this->_context, "errors/500", ["error" => $e->getMessage()]);
+                    return new Response($this->_context, "errors/500");
                 }
 
-                $response =  call_user_func_array([$controller, $match_result->route()->getAction()], $method_args);
+                try {
+                    $response = call_user_func_array([$controller, $match_result->route()->getAction()], $method_args);
+                } catch (Throwable $e) {
+                    if ($this->_context->config()->get("app.dev"))
+                        return new Response($this->_context, "errors/500", ["error" => $e->getMessage()]);
+                    return new Response($this->_context, "errors/500");
+                }
 
                 return ($response) ? $response : new EmptyResponse();
             }

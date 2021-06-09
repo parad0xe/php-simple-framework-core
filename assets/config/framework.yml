@@ -1,4 +1,6 @@
 app:
+  dev: true
+
   directory:
     root: "%root%"
     public: "%root%"
