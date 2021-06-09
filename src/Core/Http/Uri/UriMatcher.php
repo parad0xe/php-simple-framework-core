@@ -3,10 +3,21 @@
 
 namespace Parad0xeSimpleFramework\Core\Http\Uri;
 
+use Parad0xeSimpleFramework\Core\ApplicationContext;
 use Parad0xeSimpleFramework\Core\Route\Route;
 
 class UriMatcher
 {
+    /**
+     * @var ApplicationContext
+     */
+    private ApplicationContext $_context;
+
+    public function __construct(ApplicationContext $context)
+    {
+        $this->_context = $context;
+    }
+
     /**
      * @param Uri $uri
      * @param Route $route
@@ -26,7 +37,8 @@ class UriMatcher
                 startsWith($uri->getUri() . "/index", $route_uri_start_with) !== false
             ) &&
             preg_match($regex, $match_data['uri']) &&
-            (preg_match($regex, $uri->getUri()) || strpos($match_data["uri"], $uri->getUri()) !== false)
+            (preg_match($regex, $uri->getUri()) || strpos($match_data["uri"], $uri->getUri()) !== false) &&
+            in_array($this->_context->request()->method(), $route->getMethods())
         ) {
             $route_uri->addUriParameters($uri->getUriParameters());
             $route_uri->addUriParameters($match_data["parameters"]);

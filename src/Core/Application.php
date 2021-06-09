@@ -50,7 +50,7 @@ class Application
         $uri = new Uri($request->uri());
 
         foreach ($this->_context->route()->all() as $route) {
-            $match_result = (new UriMatcher())->match($uri, $route);
+            $match_result = (new UriMatcher($this->_context))->match($uri, $route);
 
             if ($match_result) {
                 $controller_path = $match_result->route()->getController();

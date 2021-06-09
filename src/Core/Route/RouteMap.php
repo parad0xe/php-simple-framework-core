@@ -92,6 +92,11 @@ class RouteMap
             foreach ($rc->getMethods() as $method) {
                 if($method->isPublic() && !startsWith($method->getName(), "__")) {
                     $attributes = $method->getAttributes(Route::class);
+
+                    $methods = $method->getAttributes(RouteMethod::class);
+                    $methods = (empty($methods)) ? ["GET"] : $methods[0]->getArguments();
+                    $methods = array_map(function($v) { return strtoupper($v); }, $methods);
+
                     foreach ($attributes as $attribute) {
                         $route_name = $lower_controller_name . ":" . $method->getName();
 
@@ -103,7 +108,8 @@ class RouteMap
 
                         $route = (new Route($name, $url, $parameters))
                             ->setController($controller)
-                            ->setAction($action);
+                            ->setAction($action)
+                            ->setMethods($methods);
 
                         $this->_route_map[$name] = $route;
                     }
@@ -111,7 +117,7 @@ class RouteMap
             }
         }, $controller_classnames);
 
-        $this->_route_map["root"] = new Route("root", "/");
+        $this->_route_map["root"] = (new Route("root", "/"))->setMethods(["GET"]);
     }
 
     /**

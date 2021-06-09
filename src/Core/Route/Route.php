@@ -6,25 +6,15 @@ namespace Parad0xeSimpleFramework\Core\Route;
 
 class Route
 {
-    /**
-     * @var string
-     */
     private string $name;
 
-    /**
-     * @var string
-     */
     private string $uri;
 
-    /**
-     * @var array
-     */
     private array $parameters = [];
 
-    /**
-     * @var string
-     */
     private string $controller = "";
+
+    private array $methods = [];
 
     /**
      * @var string
@@ -95,6 +85,24 @@ class Route
     public function setAction(string $action): Route
     {
         $this->action = $action;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMethods(): array
+    {
+        return $this->methods;
+    }
+
+    /**
+     * @param array $methods
+     * @return Route
+     */
+    public function setMethods(array $methods): Route
+    {
+        $this->methods = $methods;
         return $this;
     }
 }
