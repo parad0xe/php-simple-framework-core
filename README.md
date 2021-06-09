@@ -31,10 +31,27 @@ extension=yaml.so
 
 ## Installation
 
+Create empty project
+
+```bash
+mkdir <project_name>
+```
+
+Init composer
+
+```bash
+composer init
+```
+
 In your composer.json add:
 
 ```json
 {
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
     "repositories": [
         {
             "type": "path",
@@ -42,10 +59,16 @@ In your composer.json add:
         }
     ],
     "scripts": {
-        "framework:install": "mkdir libs && mkdir config && mkdir pages && git -C libs clone https://github.com/parad0xe/php-simple-framework-core.git && composer require parad0xe/php-simple-framework-core && cp libs/php-simple-framework-core/framework.yml config",
+        "framework:install": "mkdir libs && git -C libs clone https://github.com/parad0xe/php-simple-framework-core.git && composer require parad0xe/php-simple-framework-core && cp -R libs/parad0xe/php-simple-framework-core/assets/* .",
         "framework:update": "rm -rf libs/php-simple-framework-core && git -C libs clone https://github.com/parad0xe/php-simple-framework-core.git"
     }
 }
+```
+
+Update autoload
+
+```bash
+composer dump-autoload
 ```
 
 Then, install it:
@@ -54,10 +77,15 @@ Then, install it:
 composer run framework:install
 ```
 
-## Usage
+Run the server
 
-Create directory `pages` in your root project directory\
-Create directory `Controller` in your src project directory
+```bash
+php -S localhost:3000
+```
+
+Now, you can access it with the url: `http://localhost:3000`
+
+## Usage
 
 ### Index
 
