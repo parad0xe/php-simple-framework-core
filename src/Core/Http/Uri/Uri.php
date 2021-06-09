@@ -10,7 +10,7 @@ class Uri
 
     private string $uri;
 
-    private array $exploded_uri;
+    private array $exploded_uri = [];
 
     private array $uri_parameters = [];
 
@@ -78,11 +78,11 @@ class Uri
         $exploded_uri = ($exploded_uri[0] === "") ? [] : $exploded_uri;
 
         if(count($exploded_uri) == 0) {
-            $url_data[0] = "errors";
-            $url_data[1] = "404";
-        } else $url_data = $exploded_uri;
+            $this->uri = "/";
+            return;
+        }
 
-        $this->uri = "/" . implode("/", $url_data);
+        $this->uri = "/" . implode("/", $exploded_uri);
         $this->exploded_uri = $exploded_uri;
     }
 

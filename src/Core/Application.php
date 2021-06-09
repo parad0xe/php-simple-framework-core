@@ -53,7 +53,7 @@ class Application {
                 $controller_path = $match_result->route()->getController();
 
                 if($match_result->route()->getName() === "root")
-                    return new RedirectResponse($this->_context->config()->get("app.endpoints.home"));
+                    return new RedirectResponse($this->_context->route()->get($this->_context->config()->get("app.endpoints.home"))->getUri());
 
                 if(!class_exists($controller_path))
                     return new Response($this->_context, "errors/404");
@@ -71,10 +71,10 @@ class Application {
                 if($controller->routes_request_auth[$match_result->route()->getName()] && !$this->getContext()->auth()->isAuth()) {
                     if($this->_context->request()->cookie()->has($this->_context->config()->get("app.cookie.first_connection")))
                         $this->_context->request()->flash()->push("errors", "You must be logged.");
-                    return new RedirectResponse($this->_context->config()->get("app.endpoints.auth.login"));
+                    return new RedirectResponse($this->_context->route()->get($this->_context->config()->get("app.endpoints.auth.login"))->getUri());
                 } elseif(!$controller->routes_request_auth[$match_result->route()->getName()] && $this->getContext()->auth()->isAuth()) {
                     $this->_context->request()->flash()->push("errors", "You must be logout.");
-                    return new RedirectResponse($this->_context->config()->get("app.endpoints.home"));
+                    return new RedirectResponse($this->_context->route()->get($this->_context->config()->get("app.endpoints.home"))->getUri());
                 }
 
                 try {
