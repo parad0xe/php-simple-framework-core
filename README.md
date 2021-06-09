@@ -123,6 +123,7 @@ namespace App\Controller;
 
 use Parad0xeSimpleFramework\Core\Http\Controller\AbstractController;
 use Parad0xeSimpleFramework\Core\Route\Route;
+use Parad0xeSimpleFramework\Core\Route\RouteMethod;
 
 class FooController extends AbstractController
 {
@@ -133,12 +134,13 @@ class FooController extends AbstractController
 
     #[Route("foo:index", "/foo/index")]
     public function index() {
-        return $this->render("api/index", [
+        return $this->render("foo/index", [
             "name" => "Hello World"
-        ]); // return 'pages/api/index.php' (with args: $name)
+        ]); // return 'pages/foo/index.php' (with args: $name)
     }
 
     #[Route("foo:post:view", "/foo/post/:id/:slug", ["id" => ["default" => 1, "regex" => "\d+"],"slug" => ["default" => "james", "regex" => "[a-zA-Z]+(-[a-zA-Z0-9]+)*"]])]
+    #[RouteMethod("get", "post")]    
     public function view(int $id, string $slug) {
         return $this->json([
             "id" => $id,
