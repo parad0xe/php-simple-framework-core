@@ -8,9 +8,9 @@ use Exception;
 use Parad0xeSimpleFramework\Core\ApplicationContext;
 use Parad0xeSimpleFramework\Core\Database\Builder\QueryBuilder;
 
-class AbstractRepository
+abstract class AbstractRepository
 {
-    protected ?string $table = null;
+    protected string $table;
     protected ?string $entity_classname = null;
 
     /**
@@ -26,15 +26,15 @@ class AbstractRepository
     /**
      * UserRepository constructor.
      * @param ApplicationContext $context
+     * @param string $table
+     * @param string $entity_classname
      * @throws Exception
      */
-    public function __construct(ApplicationContext $context)
+    public function __construct(ApplicationContext $context, string $table, ?string $entity_classname = null)
     {
         $this->context = $context;
-
-        if(!$this->table) {
-            throw new Exception("Repository " . __CLASS__ . " must implement \$table");
-        }
+        $this->table = $table;
+        $this->entity_classname = $entity_classname;
 
         $this->builder = $context->database()->builder($this->table, $this->entity_classname);
     }
