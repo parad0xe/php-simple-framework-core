@@ -9,8 +9,8 @@ class Request
         return $this->server()->uri();
     }
 
-    public function method(): ?string {
-        return strtoupper($this->server()->method());
+    public function method(): string {
+        return $this->server()->method();
     }
 
     public function protocol(): ?string {

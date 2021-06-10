@@ -5,6 +5,7 @@ namespace Parad0xeSimpleFramework\Core\Http\Controller;
 
 
 use Parad0xeSimpleFramework\Core\ApplicationContext;
+use Parad0xeSimpleFramework\Core\Response\ErrorResponse;
 use Parad0xeSimpleFramework\Core\Response\JsonResponse;
 use Parad0xeSimpleFramework\Core\Response\RedirectResponse;
 use Parad0xeSimpleFramework\Core\Response\Response;
@@ -50,5 +51,14 @@ abstract class AbstractController
      */
     protected function redirectTo(string $route_name, array $params = []) {
         return $this->_context->route()->redirectTo($route_name, $params);
+    }
+
+    /**
+     * @param int $code
+     * @param string|null $error
+     * @return ErrorResponse
+     */
+    protected function errorResponse(int $code, ?string $error = null): ErrorResponse {
+        return new ErrorResponse($this->_context, $code, $error);
     }
 }

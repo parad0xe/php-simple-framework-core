@@ -11,9 +11,9 @@ class Server extends RequestBag
         return $this->get("REQUEST_URI");
     }
 
-    public function method(): ?string
+    public function method(): string
     {
-        return $this->get("REQUEST_METHOD");
+        return strtoupper($this->get("REQUEST_METHOD", "GET"));
     }
 
     public function protocol(): ?string
