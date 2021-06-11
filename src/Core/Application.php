@@ -2,6 +2,7 @@
 
 namespace Parad0xeSimpleFramework\Core;
 
+use Parad0xeSimpleFramework\Core\Auth\Auth;
 use Parad0xeSimpleFramework\Core\Http\Uri\Uri;
 use Parad0xeSimpleFramework\Core\Http\Uri\UriMatcher;
 use Parad0xeSimpleFramework\Core\Request\Request;
@@ -21,12 +22,12 @@ class Application
     /**
      * @var string
      */
-    private string $_root_project_directory;
+    protected string $_root_project_directory;
 
     /**
      * @var ApplicationContext
      */
-    private ApplicationContext $_context;
+    protected ApplicationContext $_context;
 
     public function __construct($root_project_directory)
     {
@@ -36,6 +37,8 @@ class Application
 
         if (session_status() === PHP_SESSION_NONE)
             session_start();
+
+        $this->_context = new ApplicationContext($this->_root_project_directory);
     }
 
     /**
@@ -45,7 +48,7 @@ class Application
      */
     public function dispatch(Request $request): ResponseInterface
     {
-        $this->_context = new ApplicationContext($this->_root_project_directory, $request);
+        $this->_context->load($request);
 
         $uri = new Uri($request->uri());
 
@@ -70,21 +73,33 @@ class Application
                     return new ErrorResponse($this->_context, 500, "'$controller_path' must implement route definition for '{$match_result->route()->getName()}'");
 
                 if ($controller->routes_request_auth[$match_result->route()->getName()] && !$this->getContext()->auth()->isAuth()) {
+                    if($this->_context->config()->get("app.endpoints.auth.login") === $match_result->route()->getName())
+                        return new ErrorResponse($this->_context, 500, "infinite redirection for route '{$match_result->route()->getName()}' (login required but not connected)");
                     if ($this->_context->request()->cookie()->has($this->_context->config()->get("app.cookie.first_connection")))
                         $this->_context->request()->flash()->push("errors", "You must be logged.");
                     return new RedirectResponse($this->_context->route()->get($this->_context->config()->get("app.endpoints.auth.login"))->getUri());
                 } elseif (!$controller->routes_request_auth[$match_result->route()->getName()] && $this->getContext()->auth()->isAuth()) {
+                    if($this->_context->config()->get("app.endpoints.home") === $match_result->route()->getName())
+                        return new ErrorResponse($this->_context, 500, "infinite redirection for route '{$match_result->route()->getName()}' (logout required but connected)");
                     $this->_context->request()->flash()->push("errors", "You must be logout.");
                     return new RedirectResponse($this->_context->route()->get($this->_context->config()->get("app.endpoints.home"))->getUri());
                 }
 
+                $di_container = [
+                    ApplicationContext::class => $this->_context,
+                    Request::class => $this->_context->request(),
+                    Auth::class => $this->_context->auth()
+                ];
+
                 try {
-                    $method_args = array_reduce((new ReflectionMethod($controller, $match_result->route()->getAction()))->getParameters(), function ($a, $v) use ($match_result) {
+                    $method_args = array_reduce((new ReflectionMethod($controller, $match_result->route()->getAction()))->getParameters(), function ($a, $v) use ($match_result, $di_container) {
                         /**
                          * @var ReflectionParameter $v
                          */
                         if (array_key_exists($v->name, $match_result->routeParameters())) {
                             $a[] = $match_result->routeParameters()[$v->name];
+                        } else if($v->getType() && array_key_exists($v->getType()->getName(), $di_container)) {
+                            $a[] = $di_container[$v->getType()->getName()];
                         } else {
                             $a[] = null;
                         }

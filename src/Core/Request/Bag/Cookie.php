@@ -9,19 +9,40 @@ use Parad0xeSimpleFramework\Core\Request\RequestBag;
 class Cookie extends RequestBag
 {
     /**
+     * @var string
+     */
+    private string $_app_id;
+
+    public function __construct(string $app_id, array &$data)
+    {
+        parent::__construct($data);
+        $this->_app_id = $app_id;
+    }
+
+    /**
      * @param string $key
      * @param $value
      */
     public function set(string $key, $value) {
-        setcookie($key, $value, 0, "/");
+        setcookie("{$this->app_id}.$key", $value, 0, "/");
+    }
+
+    public function get(string $key, $default = null)
+    {
+        return parent::get("{$this->app_id}.$key", $default);
+    }
+
+    public function has(string $key): bool
+    {
+        return parent::has("{$this->app_id}.$key");
     }
 
     /**
      * @param string $key
      */
     public function delete(string $key) {
-        if($this->has($key)) {
-            unset($_COOKIE[$key]);
+        if($this->has("{$this->app_id}.$key")) {
+            unset($_COOKIE["{$this->app_id}.$key"]);
         }
     }
 }

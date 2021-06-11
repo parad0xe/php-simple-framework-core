@@ -44,17 +44,19 @@ class ApplicationContext
     /**
      * ApplicationContext constructor.
      * @param string $root_project_directory
-     * @param Request $request
      * @throws Exception
      */
-    public function __construct(string $root_project_directory, Request $request)
+    public function __construct(string $root_project_directory)
     {
         $this->_root_project_directory = $root_project_directory;
         $this->_config = new Configuration($this->_root_project_directory);
-        $this->_auth = new Auth($request);
-        $this->_request = $request;
         $this->_database = new Database($this);
         $this->_route_map = new RouteMap($this);
+    }
+
+    public function load(Request $request) {
+        $this->_auth = new Auth($request);
+        $this->_request = $request;
     }
 
     /**

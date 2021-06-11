@@ -9,6 +9,17 @@ use Parad0xeSimpleFramework\Core\Request\RequestBag;
 class Flash extends RequestBag
 {
     /**
+     * @var string
+     */
+    private string $_app_id;
+
+    public function __construct(string $app_id, array &$data)
+    {
+        parent::__construct($data);
+        $this->_app_id = $app_id;
+    }
+
+    /**
      * Add key => value in session
      *
      * @param string $key
@@ -16,7 +27,7 @@ class Flash extends RequestBag
      */
     public function add(string $key, $value)
     {
-        $_SESSION[$key] = $value;
+        $_SESSION["{$this->app_id}.$key"] = $value;
     }
 
     /**
@@ -27,11 +38,16 @@ class Flash extends RequestBag
      */
     public function push(string $key, $value)
     {
-        if(!isset($_SESSION[$key])) {
-            $_SESSION[$key] = [];
+        if(!isset($_SESSION["{$this->app_id}.$key"])) {
+            $_SESSION["{$this->app_id}.$key"] = [];
         }
 
-        $_SESSION[$key][] = $value;
+        $_SESSION["{$this->app_id}.$key"][] = $value;
+    }
+
+    public function has(string $key): bool
+    {
+        return parent::has("{$this->app_id}.$key");
     }
 
     /**
@@ -43,10 +59,10 @@ class Flash extends RequestBag
      */
     public function get(string $key, $default = null)
     {
-        if(!isset($_SESSION[$key])) return $default;
+        if(!isset($_SESSION["{$this->app_id}.$key"])) return $default;
 
-        $data = $_SESSION[$key];
-        unset($_SESSION[$key]);
+        $data = $_SESSION["{$this->app_id}.$key"];
+        unset($_SESSION["{$this->app_id}.$key"]);
         return $data;
     }
 }

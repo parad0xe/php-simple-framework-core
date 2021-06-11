@@ -13,6 +13,8 @@ use Parad0xeSimpleFramework\Core\Request\Bag\Session;
 
 trait RequestTrait
 {
+    protected string $_app_id;
+
     protected Server $_server;
     protected Post $_post;
     protected Get $_get;
@@ -21,8 +23,10 @@ trait RequestTrait
     protected Files $_files;
     protected Cookie $_cookie;
 
-    public function __construct(array $env = [])
+    public function __construct(string $app_id, array $env = [])
     {
+        $this->_app_id = $app_id;
+
         $server = $env["SERVER"] ?? $_SERVER;
         $post = $env["POST"] ?? $_POST;
         $get = $env["GET"] ?? $_GET;
@@ -31,10 +35,10 @@ trait RequestTrait
         $this->_server = new Server($server);
         $this->_post = new Post($post);
         $this->_get = new Get($get);
-        $this->_session = new Session($_SESSION);
-        $this->_flash = new Flash($_SESSION);
+        $this->_session = new Session($app_id, $_SESSION);
+        $this->_flash = new Flash($app_id, $_SESSION);
         $this->_files = new Files($_FILES);
-        $this->_cookie = new Cookie($cookie);
+        $this->_cookie = new Cookie($app_id, $cookie);
     }
 
     public function post(): Post

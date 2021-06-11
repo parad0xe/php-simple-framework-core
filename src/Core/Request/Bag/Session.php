@@ -9,11 +9,32 @@ use Parad0xeSimpleFramework\Core\Request\RequestBag;
 class Session extends RequestBag
 {
     /**
+     * @var string
+     */
+    private string $_app_id;
+
+    public function __construct(string $app_id, array &$data)
+    {
+        parent::__construct($data);
+        $this->_app_id = $app_id;
+    }
+
+    /**
      * @param string $key
      * @param $value
      */
     public function set(string $key, $value) {
-        $_SESSION[$key] = $value;
+        $_SESSION["{$this->app_id}.$key"] = $value;
+    }
+
+    public function has(string $key): bool
+    {
+        return parent::has("{$this->app_id}.$key");
+    }
+
+    public function get(string $key, $default = null)
+    {
+        return parent::get("{$this->app_id}.$key", $default);
     }
 
     /**
@@ -21,8 +42,8 @@ class Session extends RequestBag
      */
     public function unset(string $key)
     {
-        if($this->has($key)) {
-            unset($_SESSION[$key]);
+        if($this->has("{$this->app_id}.$key")) {
+            unset($_SESSION["{$this->app_id}.$key"]);
         }
     }
 }

@@ -32,6 +32,7 @@ class UriMatcher
         $regex = "/^" . str_replace("/", "\/", $match_data['regex_uri']) . "$/";
         $route_uri_start_with = explode("/:", $route_uri->getUri())[0];
         if(
+            strpos($match_data['regex_uri'], "/:") === false &&
             (
                 (startsWith($uri->getUri(), $route_uri_start_with) !== false && strlen($uri->getUri()) <= $route_uri_start_with) ||
                 startsWith($uri->getUri() . "/index", $route_uri_start_with) !== false

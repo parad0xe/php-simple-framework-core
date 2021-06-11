@@ -34,14 +34,35 @@ class RouteMap
 
     /**
      * @param string $route_name
+     * @param array $args
+     * @return string
+     */
+    public function generate(string $route_name, array $args = []): string {
+        $copy_args = $args;
+
+        if(array_key_exists($route_name, $this->_route_map)) {
+            $uri = $this->_route_map[$route_name]->getUri();
+
+            foreach ($copy_args as $key => $arg) {
+                if(strpos($uri, ":$key") !== false) {
+                    $uri = str_replace(":$key", $arg, $uri);
+                    unset($copy_args[$key]);
+                }
+            }
+
+            return explode("/:", $uri)[0] . $this->__urlParamsEncode($copy_args);
+        }
+
+        return "";
+    }
+
+    /**
+     * @param string $route_name
      * @param array $params
      * @return string|null
      */
     public function url(string $route_name, array $params = []) {
-        if(($route = $this->get($route_name)))
-            return $route->getUri() . $this->__urlParamsEncode($params);
-
-        return null;
+        return $this->generate($route_name, $params);
     }
 
     /**
@@ -59,7 +80,7 @@ class RouteMap
      * @return RedirectResponse
      */
     public function redirectTo(string $route_name, array $params = []): RedirectResponse {
-        return new RedirectResponse($this->url($route_name, $params));
+        return new RedirectResponse($this->generate($route_name, $params));
     }
 
     /**

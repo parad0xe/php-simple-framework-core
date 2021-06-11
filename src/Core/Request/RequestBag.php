@@ -5,9 +5,14 @@ namespace Parad0xeSimpleFramework\Core\Request;
 abstract class RequestBag implements RequestBagInterface
 {
     /**
+     * @var string
+     */
+    protected ?string $app_id = null;
+
+    /**
      * @var array
      */
-    protected $data;
+    protected array $data;
 
     /**
      * RequestBag constructor.

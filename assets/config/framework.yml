@@ -1,4 +1,6 @@
 app:
+  id: "48613de843efd" # replace with random string
+
   dev: true
 
   directory:

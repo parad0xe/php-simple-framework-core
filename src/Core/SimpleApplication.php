@@ -25,7 +25,7 @@ class SimpleApplication extends Application
         parent::__construct($root_project_directory);
 
         try {
-            $this->response = $this->dispatch(new Request($env));
+            $this->response = $this->dispatch(new Request($this->getContext()->config()->get("app.id"), $env));
         } catch (Exception $e) {
             die($e->getMessage());
         }
