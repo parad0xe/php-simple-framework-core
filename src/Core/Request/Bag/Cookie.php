@@ -24,25 +24,25 @@ class Cookie extends RequestBag
      * @param $value
      */
     public function set(string $key, $value) {
-        setcookie("{$this->app_id}.$key", $value, 0, "/");
+        setcookie("{$this->_app_id}.$key", $value, 0, "/");
     }
 
     public function get(string $key, $default = null)
     {
-        return parent::get("{$this->app_id}.$key", $default);
+        return parent::get("{$this->_app_id}.$key", $default);
     }
 
     public function has(string $key): bool
     {
-        return parent::has("{$this->app_id}.$key");
+        return parent::has("{$this->_app_id}.$key");
     }
 
     /**
      * @param string $key
      */
     public function delete(string $key) {
-        if($this->has("{$this->app_id}.$key")) {
-            unset($_COOKIE["{$this->app_id}.$key"]);
+        if($this->has("{$this->_app_id}.$key")) {
+            unset($_COOKIE["{$this->_app_id}.$key"]);
         }
     }
 }

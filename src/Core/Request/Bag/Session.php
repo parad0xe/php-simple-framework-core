@@ -24,17 +24,17 @@ class Session extends RequestBag
      * @param $value
      */
     public function set(string $key, $value) {
-        $_SESSION["{$this->app_id}.$key"] = $value;
+        $_SESSION["{$this->_app_id}.$key"] = $value;
     }
 
     public function has(string $key): bool
     {
-        return parent::has("{$this->app_id}.$key");
+        return parent::has("{$this->_app_id}.$key");
     }
 
     public function get(string $key, $default = null)
     {
-        return parent::get("{$this->app_id}.$key", $default);
+        return parent::get("{$this->_app_id}.$key", $default);
     }
 
     /**
@@ -42,8 +42,8 @@ class Session extends RequestBag
      */
     public function unset(string $key)
     {
-        if($this->has("{$this->app_id}.$key")) {
-            unset($_SESSION["{$this->app_id}.$key"]);
+        if($this->has("{$this->_app_id}.$key")) {
+            unset($_SESSION["{$this->_app_id}.$key"]);
         }
     }
 }
