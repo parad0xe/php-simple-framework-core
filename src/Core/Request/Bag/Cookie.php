@@ -41,7 +41,7 @@ class Cookie extends RequestBag
      * @param string $key
      */
     public function delete(string $key) {
-        if($this->has("{$this->_app_id}.$key")) {
+        if($this->has($key)) {
             unset($_COOKIE["{$this->_app_id}.$key"]);
         }
     }

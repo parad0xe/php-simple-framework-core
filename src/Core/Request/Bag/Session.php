@@ -42,7 +42,7 @@ class Session extends RequestBag
      */
     public function unset(string $key)
     {
-        if($this->has("{$this->_app_id}.$key")) {
+        if($this->has($key)) {
             unset($_SESSION["{$this->_app_id}.$key"]);
         }
     }
