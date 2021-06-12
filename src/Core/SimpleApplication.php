@@ -6,6 +6,7 @@ namespace Parad0xeSimpleFramework\Core;
 
 use Exception;
 use Parad0xeSimpleFramework\Core\Request\Request;
+use Parad0xeSimpleFramework\Core\Response\ErrorResponse;
 use Parad0xeSimpleFramework\Core\Response\ResponseInterface;
 
 class SimpleApplication extends Application
@@ -27,7 +28,7 @@ class SimpleApplication extends Application
         try {
             $this->response = $this->dispatch(new Request($this->getContext()->config()->get("app.id"), $env));
         } catch (Exception $e) {
-            die($e->getMessage());
+            $this->response = new ErrorResponse($this->_context, 500, $e->getMessage());
         }
     }
 

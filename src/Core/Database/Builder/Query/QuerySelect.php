@@ -17,10 +17,14 @@ class QuerySelect extends AbstractQuery
     private string $select;
 
     /**
+     * @var string|null
+     */
+    private ?string $alias = null;
+
+    /**
      * @var array
      */
     protected array $limit = [];
-
     /**
      * @var array
      */
@@ -32,6 +36,15 @@ class QuerySelect extends AbstractQuery
 
         $this->select = $select;
         $this->type = self::$TYPE_SELECT;
+    }
+
+    /**
+     * @param string $alias
+     * @return QuerySelect
+     */
+    public function alias(string $alias): QuerySelect {
+        $this->alias = $alias;
+        return $this;
     }
 
     /**
@@ -87,6 +100,7 @@ class QuerySelect extends AbstractQuery
     public function getQuery(): PDOStatement {
         $this->__pushWhere();
 
+        $table = ($this->alias) ? "{$this->table} as {$this->alias}" : "{$this->table}";
         $where = (count($this->where) > 0) ? " WHERE " . implode(" OR ", $this->where) : "";
         $order = (count($this->order_by) > 0) ? " ORDER BY " . implode(", ", $this->order_by) : "";
         $limit = (count($this->limit) > 0)
@@ -95,7 +109,9 @@ class QuerySelect extends AbstractQuery
                 : " LIMIT {$this->limit[0]}"
             : "";
 
-        $statement = "SELECT {$this->select} FROM {$this->table}{$where}{$order}{$limit}";
+        $statement = "SELECT {$this->select} FROM {$table}{$where}{$order}{$limit}";
+
+        dd($statement);
 
         $query = $this->pdo->prepare($statement);
         foreach ($this->parameters as $key => $value)

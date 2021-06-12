@@ -29,10 +29,14 @@ class Database
         $connect_database = $context->config()->get("app.database.connect_database");
 
         if($connect_database) {
-            $this->pdo = new PDO("mysql:dbname={$database};host={$host};port={$port}", $user, $password, [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
-            ]);
+            try {
+                $this->pdo = new PDO("mysql:dbname={$database};host={$host};port={$port}", $user, $password, [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+                ]);
+            } catch(Exception $e) {
+                return;
+            }
         }
     }
 

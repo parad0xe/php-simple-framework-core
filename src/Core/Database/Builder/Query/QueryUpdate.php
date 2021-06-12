@@ -10,6 +10,8 @@ use PDOStatement;
 
 class QueryUpdate extends AbstractQuery
 {
+    use WhereProtection;
+
     /**
      * @var array
      */
@@ -19,7 +21,6 @@ class QueryUpdate extends AbstractQuery
      * @var array
      */
     private array $data;
-
     private int $parameter_index = 0;
 
     public function __construct(array $update, PDO $pdo, string $table, ?string $entity_classname = null)
@@ -45,6 +46,9 @@ class QueryUpdate extends AbstractQuery
 
     public function getQuery(): PDOStatement {
         $this->__pushWhere();
+
+        if(count($this->where) === 0 && $this->where_protection)
+            throw new Exception("[WHERE protection activate] Update query failed. No WHERE added to query.");
 
         $set = array_reduce($this->data, function($query, $v) {
             if(!is_array($v) || count($v) !== count($this->update))

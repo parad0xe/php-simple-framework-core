@@ -65,10 +65,9 @@ class QueryBuilder
     }
 
     /**
-     * @param bool $where_protection
      * @return QueryDelete
      */
-    public function delete(bool $where_protection = true): QueryDelete {
-        return new QueryDelete($where_protection, $this->pdo, $this->table, $this->entity_classname);
+    public function delete(): QueryDelete {
+        return new QueryDelete($this->pdo, $this->table, $this->entity_classname);
     }
 }

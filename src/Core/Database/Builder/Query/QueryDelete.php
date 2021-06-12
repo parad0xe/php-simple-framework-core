@@ -11,16 +11,17 @@ use PDOStatement;
 
 class QueryDelete extends AbstractQuery
 {
+    use WhereProtection;
+
     /**
      * @var bool
      */
     private bool $where_protection;
 
-    public function __construct(bool $where_protection, PDO $pdo, string $table, ?string $entity_classname = null)
+    public function __construct(PDO $pdo, string $table, ?string $entity_classname = null)
     {
         parent::__construct($pdo, $table, $entity_classname);
 
-        $this->where_protection = $where_protection;
         $this->type = self::$TYPE_DELETE;
     }
 
@@ -41,10 +42,10 @@ class QueryDelete extends AbstractQuery
     {
         $this->__pushWhere();
 
-        $where = (count($this->where) > 0) ? " WHERE " . implode(" OR ", $this->where) : "";
+        if(count($this->where) === 0 && $this->where_protection)
+            throw new Exception("[WHERE protection activate] Delete query failed. No WHERE added to query.");
 
-        if($where === "" && $this->where_protection)
-            throw new Exception("[WHERE protection activate] Delete failed. No WHERE added to query.");
+        $where = (count($this->where) > 0) ? " WHERE " . implode(" OR ", $this->where) : "";
 
         $statement = "DELETE FROM {$this->table}{$where}";
 

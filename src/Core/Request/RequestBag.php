@@ -30,7 +30,7 @@ abstract class RequestBag implements RequestBagInterface
      */
     public function get(string $key, $default = null)
     {
-        return ($this->has($key)) ? $this->data[$key] : $default;
+        return array_key_exists($key, $this->data) ? $this->data[$key] : $default;
     }
 
     /**
