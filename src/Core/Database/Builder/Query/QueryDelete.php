@@ -13,11 +13,6 @@ class QueryDelete extends AbstractQuery
 {
     use WhereProtection;
 
-    /**
-     * @var bool
-     */
-    private bool $where_protection;
-
     public function __construct(PDO $pdo, string $table, ?string $entity_classname = null)
     {
         parent::__construct($pdo, $table, $entity_classname);

@@ -15,6 +15,8 @@ class RouteMap
      */
     private array $_route_map = [];
 
+    private array $_route_map_by_method = [];
+
     public function __construct(ApplicationContext $context)
     {
         $this->__load($context);
@@ -84,9 +86,14 @@ class RouteMap
     }
 
     /**
+     * @param string|null $method
      * @return Route[]
      */
-    public function all(): array {
+    public function all(?string $method = null): array {
+        if($method) {
+            $method = strtoupper($method);
+            return (array_key_exists($method, $this->_route_map_by_method)) ? $this->_route_map_by_method[$method] : [];
+        }
         return $this->_route_map;
     }
 
@@ -133,6 +140,9 @@ class RouteMap
                             ->setMethods($methods);
 
                         $this->_route_map[$name] = $route;
+
+                        foreach ($methods as $method)
+                            $this->_route_map_by_method[$method][$name] = $route;
                     }
                 }
             }

@@ -24,6 +24,11 @@ class QuerySelect extends AbstractQuery
     /**
      * @var array
      */
+    protected array $join = [];
+
+    /**
+     * @var array
+     */
     protected array $limit = [];
     /**
      * @var array
@@ -44,6 +49,18 @@ class QuerySelect extends AbstractQuery
      */
     public function alias(string $alias): QuerySelect {
         $this->alias = $alias;
+        return $this;
+    }
+
+    public function join(string $table, string $alias, ?string $join_condition = null): QuerySelect {
+        if(!$join_condition) {
+            $join_condition = $alias;
+            $alias = null;
+        }
+
+        $table = ($alias) ? "$table as $alias" : $table;
+        $this->join[] = "INNER JOIN $table ON $join_condition";
+
         return $this;
     }
 
@@ -101,6 +118,7 @@ class QuerySelect extends AbstractQuery
         $this->__pushWhere();
 
         $table = ($this->alias) ? "{$this->table} as {$this->alias}" : "{$this->table}";
+        $join = (count($this->join) > 0) ? " " . implode(" ", $this->join) : "";
         $where = (count($this->where) > 0) ? " WHERE " . implode(" OR ", $this->where) : "";
         $order = (count($this->order_by) > 0) ? " ORDER BY " . implode(", ", $this->order_by) : "";
         $limit = (count($this->limit) > 0)
@@ -109,9 +127,7 @@ class QuerySelect extends AbstractQuery
                 : " LIMIT {$this->limit[0]}"
             : "";
 
-        $statement = "SELECT {$this->select} FROM {$table}{$where}{$order}{$limit}";
-
-        dd($statement);
+        $statement = "SELECT {$this->select} FROM {$table}{$join}{$where}{$order}{$limit}";
 
         $query = $this->pdo->prepare($statement);
         foreach ($this->parameters as $key => $value)

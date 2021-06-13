@@ -52,7 +52,7 @@ class Application
 
         $uri = new Uri($request->uri());
 
-        foreach ($this->_context->route()->all() as $route) {
+        foreach ($this->_context->route()->all($request->method()) as $route) {
             $match_result = (new UriMatcher($this->_context))->match($uri, $route);
 
             if ($match_result) {
