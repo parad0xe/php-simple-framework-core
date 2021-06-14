@@ -149,6 +149,7 @@ class RouteMap
         }, $controller_classnames);
 
         $this->_route_map["root"] = (new Route("root", "/"))->setMethods(["GET"]);
+        $this->_route_map_by_method["GET"]["root"] = $this->_route_map["root"];
     }
 
     /**
